@@ -21,12 +21,19 @@ How to install? / Installation / Setup
 ---
 * Download the latest version plugin.
 * Place the LiteTeleport-1.x.x.jar file in the plugins folder.
-* Start your server. (Support Bukkit/Spigot/Paper and derivative servers)
+* Start your server. (Supports Bukkit/Spigot/Paper and derivative servers, tested with Spigot 26.2)
 * The plugin should now show as green in the /plugins command. If it's red or missing, please check your console logs for errors.
 
 Building
 ---
-After cloning this repository, add [Craftbukkit-1.13.2.jar](https://getbukkit.org/get/fQ2hcjORI73x66tj7h0X8f4hteJAB64i) and lib directory to dependencies, build the project using IDEA Artifacts.
+### Maven (recommended)
+```bash
+mvn clean package -Dspigot.api.version=26.2-R0.1-SNAPSHOT
+```
+### Manual (IDEA Artifacts)
+After cloning this repository, install the lib JARs to your local Maven repo, then build using IDEA Artifacts.
+### CI
+Push a tag like `v1.12.0` to trigger automated build and release via GitHub Actions.
 
 # Acknowledgment
 Thanks to [JetBrains](https://www.jetbrains.com/?from=ServerMonitor) for the [Free Open Source Licenses](https://jb.gg/OpenSourceSupport)

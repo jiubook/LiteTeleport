@@ -21,12 +21,19 @@ bStats
 ---
 * 下载最新版本插件。
 * 将 LiteTeleport-1.x.x.jar 文件放入 plugins 文件夹中。
-* 启动服务器。 (支持Bukkit/Spigot/Paper及衍生服务端)
+* 启动服务器。 (支持Bukkit/Spigot/Paper及衍生服务端，已测试兼容Spigot 26.2)
 * 现在插件应该在 /plugins 命令中显示为绿色。 如果显示红色或不存在，请检查控制台日志的错误信息。
 
 构建
 ---
-克隆此存储库后，将 [Craftbukkit-1.13.2.jar](https://getbukkit.org/get/fQ2hcjORI73x66tj7h0X8f4hteJAB64i) 和 lib 目录添加到依赖项，使用 IDEA Artifacts 构建项目。
+### Maven（推荐）
+```bash
+mvn clean package -Dspigot.api.version=26.2-R0.1-SNAPSHOT
+```
+### 手动构建（IDEA Artifacts）
+克隆此存储库后，将 lib 目录中的 JAR 安装到本地 Maven 仓库，然后使用 IDEA Artifacts 构建项目。
+### CI 自动构建
+推送 tag（如 `v1.12.0`）即可通过 GitHub Actions 自动构建并发布 Release。
 
 # 鸣谢
 感谢 [JetBrains](https://www.jetbrains.com/?from=ServerMonitor) 提供的 [Free Open Source Licenses](https://jb.gg/OpenSourceSupport)

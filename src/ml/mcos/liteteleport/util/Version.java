@@ -5,7 +5,7 @@ public class Version {
     private int patch;
 
     public Version(String bukkitVersion) {
-        // 1.x.x-R0.x-SNAPSHOT
+        // 1.x.x-R0.x-SNAPSHOT or 26.x-R0.x-SNAPSHOT
         String[] parts = bukkitVersion.replace('-', '.').split("\\.");
         this.minor = Integer.parseInt(parts[1]);
         try {
@@ -71,6 +71,9 @@ public class Version {
 
     @Override
     public String toString() {
+        if (minor >= 26) {
+            return minor + "." + patch;
+        }
         return "1" + minor + patch;
     }
 }

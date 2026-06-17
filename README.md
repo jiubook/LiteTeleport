@@ -21,7 +21,7 @@ How to install? / Installation / Setup
 ---
 * Download the latest version plugin.
 * Place the LiteTeleport-1.x.x.jar file in the plugins folder.
-* Start your server. (Support Bukkit/Spigot/Paper and derivative servers)
+* Start your server. (Supports Bukkit/Spigot/Paper and derivative servers, tested with Spigot 26.2)
 * The plugin should now show as green in the /plugins command. If it's red or missing, please check your console logs for errors.
 
 Building

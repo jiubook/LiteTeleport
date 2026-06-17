@@ -21,7 +21,7 @@ bStats
 ---
 * 下载最新版本插件。
 * 将 LiteTeleport-1.x.x.jar 文件放入 plugins 文件夹中。
-* 启动服务器。 (支持Bukkit/Spigot/Paper及衍生服务端)
+* 启动服务器。 (支持Bukkit/Spigot/Paper及衍生服务端，已测试兼容Spigot 26.2)
 * 现在插件应该在 /plugins 命令中显示为绿色。 如果显示红色或不存在，请检查控制台日志的错误信息。
 
 构建

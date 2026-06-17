@@ -26,7 +26,14 @@ bStats
 
 构建
 ---
-克隆此存储库后，将 [Craftbukkit-1.13.2.jar](https://getbukkit.org/get/fQ2hcjORI73x66tj7h0X8f4hteJAB64i) 和 lib 目录添加到依赖项，使用 IDEA Artifacts 构建项目。
+### Maven（推荐）
+```bash
+mvn clean package -Dspigot.api.version=26.2-R0.1-SNAPSHOT
+```
+### 手动构建（IDEA Artifacts）
+克隆此存储库后，将 lib 目录中的 JAR 安装到本地 Maven 仓库，然后使用 IDEA Artifacts 构建项目。
+### CI 自动构建
+推送 tag（如 `v1.12.0`）即可通过 GitHub Actions 自动构建并发布 Release。
 
 # 鸣谢
 感谢 [JetBrains](https://www.jetbrains.com/?from=ServerMonitor) 提供的 [Free Open Source Licenses](https://jb.gg/OpenSourceSupport)

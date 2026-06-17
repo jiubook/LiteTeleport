@@ -26,7 +26,14 @@ How to install? / Installation / Setup
 
 Building
 ---
-After cloning this repository, add [Craftbukkit-1.13.2.jar](https://getbukkit.org/get/fQ2hcjORI73x66tj7h0X8f4hteJAB64i) and lib directory to dependencies, build the project using IDEA Artifacts.
+### Maven (recommended)
+```bash
+mvn clean package -Dspigot.api.version=26.2-R0.1-SNAPSHOT
+```
+### Manual (IDEA Artifacts)
+After cloning this repository, install the lib JARs to your local Maven repo, then build using IDEA Artifacts.
+### CI
+Push a tag like `v1.12.0` to trigger automated build and release via GitHub Actions.
 
 # Acknowledgment
 Thanks to [JetBrains](https://www.jetbrains.com/?from=ServerMonitor) for the [Free Open Source Licenses](https://jb.gg/OpenSourceSupport)

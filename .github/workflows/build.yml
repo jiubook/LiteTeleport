@@ -53,6 +53,10 @@ jobs:
         with:
           name: LiteTeleport-${{ steps.version.outputs.plugin_version }}
           path: target/LiteTeleport-*.jar
+    outputs:
+      plugin_version:
+        description: "Plugin version extracted from tag"
+        value: ${{ steps.version.outputs.plugin_version }}
 
   release:
     needs: build
@@ -64,7 +68,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: LiteTeleport-${{ github.ref_name }}
+          name: LiteTeleport-${{ needs.build.outputs.plugin_version }}
           path: ./release
 
       - name: Create GitHub Release

@@ -2,17 +2,31 @@ package ml.mcos.liteteleport.util;
 
 public class Version {
     private final int minor;
-    private int patch;
+    private final int patch;
 
     public Version(String bukkitVersion) {
-        // 1.x.x-R0.x-SNAPSHOT or 26.x-R0.x-SNAPSHOT
-        String[] parts = bukkitVersion.replace('-', '.').split("\\.");
-        this.minor = Integer.parseInt(parts[1]);
-        try {
-            this.patch = Integer.parseInt(parts[2]);
-        } catch (NumberFormatException e) {
-            this.patch = 0;
+        String[] parts = bukkitVersion.split("-", 2)[0].split("\\.");
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Unsupported Bukkit version: " + bukkitVersion);
         }
+        if ("1".equals(parts[0])) {
+            this.minor = parseVersionPart(parts[1]);
+            this.patch = parts.length > 2 ? parseVersionPart(parts[2]) : 0;
+        } else {
+            this.minor = parseVersionPart(parts[0]);
+            this.patch = parseVersionPart(parts[1]);
+        }
+    }
+
+    private static int parseVersionPart(String value) {
+        int end = 0;
+        while (end < value.length() && Character.isDigit(value.charAt(end))) {
+            end++;
+        }
+        if (end == 0) {
+            return 0;
+        }
+        return Integer.parseInt(value.substring(0, end));
     }
 
     public int getMinor() {
@@ -74,6 +88,6 @@ public class Version {
         if (minor >= 26) {
             return minor + "." + patch;
         }
-        return "1" + minor + patch;
+        return "1." + minor + "." + patch;
     }
 }

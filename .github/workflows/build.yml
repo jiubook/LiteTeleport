@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,41 +18,96 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '25'
+          cache: 'maven'
 
       - name: Extract version info from tag
         id: version
+        shell: bash
         run: |
           TAG="${GITHUB_REF#refs/tags/v}"
+          if [[ "$GITHUB_REF" != refs/tags/v* ]]; then
+            TAG="manual-${GITHUB_RUN_NUMBER}"
+          fi
           PLUGIN_VERSION="${TAG%%-*}"
           echo "plugin_version=$PLUGIN_VERSION" >> $GITHUB_OUTPUT
           echo "Plugin version: $PLUGIN_VERSION"
 
-      - name: Install local lib JARs to Maven repo
+      - name: Validate bundled lib JARs
+        shell: bash
         run: |
+          set -euo pipefail
+          required_libs=(
+            "lib/FoliaCompatibleAPI-1.2.0.jar"
+            "lib/PlaceholderAPI-2.11.3.jar"
+            "lib/PlayerPointsAPI-3.1.1.jar"
+            "lib/VaultAPI-1.7.1.jar"
+          )
+          for lib in "${required_libs[@]}"; do
+            test -s "$lib"
+          done
+
+      - name: Install local lib JARs to Maven repo
+        shell: bash
+        run: |
+          set -euo pipefail
           mvn install:install-file -Dfile=lib/FoliaCompatibleAPI-1.2.0.jar \
             -DgroupId=net.myunco -DartifactId=folia-compatible-api \
-            -Dversion=1.2.0 -Dpackaging=jar
+            -Dversion=1.2.0 -Dpackaging=jar --batch-mode --no-transfer-progress
           mvn install:install-file -Dfile=lib/PlaceholderAPI-2.11.3.jar \
             -DgroupId=me.clip -DartifactId=placeholderapi \
-            -Dversion=2.11.3 -Dpackaging=jar
+            -Dversion=2.11.3 -Dpackaging=jar --batch-mode --no-transfer-progress
           mvn install:install-file -Dfile=lib/PlayerPointsAPI-3.1.1.jar \
             -DgroupId=org.black_ixx -DartifactId=playerpoints \
-            -Dversion=3.1.1 -Dpackaging=jar
+            -Dversion=3.1.1 -Dpackaging=jar --batch-mode --no-transfer-progress
           mvn install:install-file -Dfile=lib/VaultAPI-1.7.1.jar \
             -DgroupId=net.milkbowl.vault -DartifactId=VaultAPI \
-            -Dversion=1.7.1 -Dpackaging=jar
+            -Dversion=1.7.1 -Dpackaging=jar --batch-mode --no-transfer-progress
 
       - name: Build with Maven
+        shell: bash
         run: |
+          set -euo pipefail
           mvn clean package \
             -Dspigot.api.version=26.2-R0.1-SNAPSHOT \
-            --batch-mode
+            --batch-mode \
+            --no-transfer-progress
+
+      - name: Verify plugin package
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t jars < <(find target -maxdepth 1 -type f -name 'LiteTeleport-*.jar' ! -name 'original-*' | sort)
+          if [[ "${#jars[@]}" -ne 1 ]]; then
+            printf 'Expected exactly one plugin jar, found %s:\n' "${#jars[@]}"
+            printf '%s\n' "${jars[@]}"
+            exit 1
+          fi
+
+          jar_path="${jars[0]}"
+          jar tf "$jar_path" | sort > target/plugin-contents.txt
+          required_entries=(
+            "plugin.yml"
+            "config.yml"
+            "lang/zh_cn.yml"
+            "lib/FoliaCompatibleAPI-1.2.0.jar"
+            "lib/PlaceholderAPI-2.11.3.jar"
+            "lib/PlayerPointsAPI-3.1.1.jar"
+            "lib/VaultAPI-1.7.1.jar"
+            "ml/mcos/liteteleport/LiteTeleport.class"
+          )
+          for entry in "${required_entries[@]}"; do
+            grep -Fxq "$entry" target/plugin-contents.txt
+          done
+
+          echo "jar_path=$jar_path" >> "$GITHUB_OUTPUT"
+          echo "Verified plugin package: $jar_path"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: LiteTeleport-${{ steps.version.outputs.plugin_version }}
-          path: target/LiteTeleport-*.jar
+          path: ${{ steps.package.outputs.jar_path }}
 
     outputs:
       plugin_version: ${{ steps.version.outputs.plugin_version }}
